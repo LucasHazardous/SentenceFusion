@@ -40,6 +40,8 @@
 
 Create an application that will allow user creation. Created users will be able to participate in writing a story. There will be one rule: a single user can't write two sentences in a row - that ensures that at least two people will be writing a story. Later we will also create a representative website of this project that will showcase the first sentence, which will be shared through a public endpoint.
 
+Our task is to properly configure MongoDB to make it work. Let's do it.
+
 ### Setup
 
 Login to MongoDB Atlas and create a new project. When creating a new free-tier cluster: choose a nearby location, create a new user and **set access to anywhere (0.0.0.0/0)**. Inside the cluster create a database named ***fusion*** with a collection named ***sentence***.
@@ -118,8 +120,27 @@ In the *Apply When* you can place any JSON expression that will always evaluate 
 }
 ```
 
-The *Write* advanced filter will call our previously created function. The function will evaluate whether the user's insertion request will be accepted.
+The *Write* advanced filter will call our previously created function. The function will return whether the user's insertion request will be accepted.
 
 After you are done with that, deploy your changes.
 
 Go to *App Users* on the left side panel and add two users with any email and password. The email doesn't matter since we won't be verifying it anyway.
+
+### Writing web application
+
+For writing a web app, we will need a web SDK. The SDK is hosted on a CDN under the following address: [https://unpkg.com/realm-web/dist/bundle.iife.js](https://unpkg.com/realm-web/dist/bundle.iife.js).
+
+We won't be writing the web app though. The only important thing in the [adder.html](./adder.html) is the following part (you should change the id from *appliaction* to the one that you get when pressing the copy button in the upper left corner near the name of your Realm app and the home icon):
+
+```js
+const app = new Realm.App({ id: "application" });
+
+async function loginEmailPassword(email, password) {
+    const credentials = Realm.Credentials.emailPassword(email, password);
+    const user = await app.logIn(credentials);
+    console.assert(user.id === app.currentUser.id);
+    return user;
+}
+```
+
+It logs into Realm SDK application with user credentials and then you are allowed to perform standard operations. Of course our rules should disallow a signle user to post two consecutive sentences in a row. Use [adder.html](./adder.html) to test if your configuration is working properly.

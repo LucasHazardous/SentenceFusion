@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sentence Fusion</title>
+    <script src="https://unpkg.com/realm-web/dist/bundle.iife.js"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.4/css/bulma.min.css">
+
+    <style>
+        .hidden {
+            display: none !important;
+        }
+
+        body {
+            width: 50%;
+            margin: auto;
+            margin-top: 2rem;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="loginSection">
+        <div class="field">
+            <label class="label">Email</label>
+            <div class="control">
+                <input class="input" type="email" id="email">
+            </div>
+        </div>
+        <div class="field">
+            <label class="label">Password</label>
+            <div class="control">
+                <input class="input" type="password" id="password">
+            </div>
+        </div>
+
+
+        <div class="field is-grouped">
+            <div class="control">
+                <button class="button is-link" id="loginBtn" onclick="login()">Login</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="editor" class="hidden">
+        <div class="box">
+            <label class="label">Sentence</label>
+            <input class="input" type="text" id="sentenceInput">
+        </div>
+
+        <div id="sentences">
+
+        </div>
+    </div>
+
+    <script defer>
+        const loginSection = document.getElementById("loginSection");
+        const editor = document.getElementById("editor");
+
+        const sentences = document.getElementById("sentences");
+        const sentenceInput = document.getElementById("sentenceInput");
+
+        const email = document.getElementById("email");
+        const password = document.getElementById("password");
+
+        // TODO: change the id to your own
+        const app = new Realm.App({ id: "application" });
+
+        async function loginEmailPassword(email, password) {
+            const credentials = Realm.Credentials.emailPassword(email, password);
+            const user = await app.logIn(credentials);
+            console.assert(user.id === app.currentUser.id);
+            return user;
+        }
+
+        function login() {
+            editor.classList.remove("hidden");
+            loginSection.classList.add("hidden");
+
+            loginEmailPassword(email.value, password.value).then(async (user) => {
+                const collection = app.currentUser.mongoClient("mongodb-atlas").db("fusion").collection("sentence");
+
+                async function refreshSentences() {
+                    sentences.innerHTML = (await collection.find()).map(object =>
+                        `<p><span class="tag is-primary">${object.userId}</span> ${object.content}</p>`
+                    );
+                }
+
+                sentenceInput.addEventListener("keypress", async function (event) {
+                    if (event.key === "Enter") {
+                        try {
+                            await collection.insertOne(
+                                {
+                                    userId: app.currentUser.id,
+                                    content: sentenceInput.value
+                                }
+                            );
+                        } catch {
+                            alert("Sentence could not be sent.");
+                        }
+                    }
+                });
+
+                refreshSentences();
+                setInterval(refreshSentences, 10000);
+            }).catch(() => {
+                editor.classList.add("hidden");
+                loginSection.classList.remove("hidden");
+            });
+        }
+    </script>
+</body>
+
+</html>
