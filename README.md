@@ -46,17 +46,21 @@ Login to MongoDB Atlas and create a new project. When creating a new free-tier c
 
 ### Configuring a Realm App
 
-We will begin by adding user authentication configuration. 
+Head to the **App Services** tab on the upper panel.
+
+![create app](./img/create_app.png)
+
+We will begin by adding user authentication configuration.
 
 ![authentication](./img/authentication.png)
 
 ![authentication configuration](./img/auth_conf.png)
 
+For now users won't be able to reset their passwords but a reset function must exist. We will go with the default function, without any changes.
+
 ![reset password function](./img/reset_func.png)
 
 ![enabled authentication](./img/enabled_auth.png)
-
-For now users won't be able to reset their passwords but a reset function must exist. We will go with the default function, without any changes.
 
 When you are done click *Save draft* button at the bottom. When you do changes won't be instantly deployed until you click *Review draft & deploy* button, then you get a chance to review all changes and deploy them.
 
@@ -87,3 +91,35 @@ exports = async function(arg){
 };
 ```
 
+![function code](./img/func_content.png)
+
+Remember to save draft changes.
+
+Now let's configure our rule. Go to *Rules* view on the left side panel.
+
+![role](./img/role.png)
+
+Select sentence collection, then click blue *Skip (start from scratch)* text to create a fully customized rule. Fill settings with this configuration.
+
+![role configuration](./img/role_conf.png)
+
+In the *Apply When* you can place any JSON expression that will always evaluate to true.
+
+```json
+{
+  "%%true": {
+    "%function": {
+      "name": "isInsertionAllowed",
+      "arguments": [
+        "%%user.id"
+      ]
+    }
+  }
+}
+```
+
+The *Write* advanced filter will call our previously created function. The function will evaluate whether the user's insertion request will be accepted.
+
+After you are done with that, deploy your changes.
+
+Go to *App Users* on the left side panel and add two users with any email and password. The email doesn't matter since we won't be verifying it anyway.
