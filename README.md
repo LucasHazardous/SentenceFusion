@@ -34,11 +34,11 @@
 
 ---
 
-## Project
+## Project - part 1
 
 ### Goal
 
-Create an application that will allow user creation. Created users will be able to participate in writing a story. There will be one rule: a single user can't write two sentences in a row - that ensures that at least two people will be writing a story. Later we will also create a representative website of this project that will showcase the first sentence, which will be shared through a public endpoint.
+Create an application that will allow user creation. Created users will be able to participate in writing a story. There will be one rule: a single user can't write two sentences in a row - that ensures that at least two people will be writing a story. Later we will also create a public endpoint that will return number of created sentences.
 
 Our task is to properly configure MongoDB to make it work. Let's do it.
 
@@ -58,7 +58,7 @@ We will begin by adding user authentication configuration.
 
 ![authentication configuration](./img/auth_conf.png)
 
-For now users won't be able to reset their passwords but a reset function must exist. We will go with the default function, without any changes.
+For now users won't be able to reset their passwords but a reset function must exist. We will **go with the default password reset function, without any changes**.
 
 ![reset password function](./img/reset_func.png)
 
@@ -105,7 +105,7 @@ Select sentence collection, then click blue *Skip (start from scratch)* text to 
 
 ![role configuration](./img/role_conf.png)
 
-In the *Apply When* you can place any JSON expression that will always evaluate to true.
+In the *Apply When* you can place any JSON expression that will always evaluate to true. In the write document permission we set the rule to use our function to decide, whether a document should be inserted. Learn more about [Rule Expressions](https://www.mongodb.com/docs/atlas/app-services/rules/).
 
 ```json
 {
@@ -130,7 +130,7 @@ Go to *App Users* on the left side panel and add two users with any email and pa
 
 For writing a web app, we will need a web SDK. The SDK is hosted on a CDN under the following address: [https://unpkg.com/realm-web/dist/bundle.iife.js](https://unpkg.com/realm-web/dist/bundle.iife.js).
 
-We won't be writing the web app though. The only important thing in the [adder.html](./adder.html) is the following part (you should change the id from *appliaction* to the one that you get when pressing the copy button in the upper left corner near the name of your Realm app and the home icon):
+We won't be writing the web app though. The only important thing in the [adder.html](./adder.html) is the following part (you should change the id from *appliaction* to the one, that you get when pressing the copy button, in the upper left corner near the name of your Realm app and the home icon):
 
 ```js
 const app = new Realm.App({ id: "application" });
@@ -143,4 +143,50 @@ async function loginEmailPassword(email, password) {
 }
 ```
 
-It logs into Realm SDK application with user credentials and then you are allowed to perform standard operations. Of course our rules should disallow a signle user to post two consecutive sentences in a row. Use [adder.html](./adder.html) to test if your configuration is working properly.
+This code logs into Realm SDK application with user credentials and then you are allowed to perform standard operations. Of course our rules should disallow a signle user to post two consecutive sentences in a row. Use [adder.html](./adder.html) to test if your configuration is working properly with two different users you created.
+
+---
+
+## Project - part 2
+
+### Task
+
+Set up a function that returns count of sentences. Return the number as a string in a JSON, like: **{ number: ... }**. Use the same function settings and name it *sentenceCount*.
+
+*Hint*: use testing console below to run the function and check its output, you can also perform *console.log*.
+
+<details>
+    <summary>Code Solution</summary>
+
+```js
+exports = async function(arg){
+  const mongodb = context.services.get("mongodb-atlas");
+  const db = mongodb.db("fusion");
+  const coll = db.collection("sentence");
+  
+  return { number: String(await coll.count()) };
+};
+```
+
+</details>
+
+<br />
+
+### Setting a trigger
+
+In the beginning you learned that these functions can be executed on various triggers. Rules aren't the only possibility. Let's set up a HTTPS endpoint.
+
+![endpoints list](./img/endpoints.png)
+
+Our endpoint will be for GET requests and it will respond with JSON result. Here you should copy the second URL under the *Operation Type* as later we will use it to test the endpoint.
+
+![endpoint configuration 1](./img/endpoint_conf1.png)
+
+In the *Function* option select the function that you created earlier in the task. As you can see endpoints can be also used for user creation.
+
+![endpoint configuration 2](./img/endpoint_conf2.png)
+
+After deployment, use the copied curl command to check if your endpoint returns a JSON with appropriate sentence count.
+
+---
+
