@@ -191,3 +191,48 @@ After deployment, use the copied curl command to check if your endpoint returns 
 
 ---
 
+## Project - part 3
+
+There is one more configuration left - document validation. We will use MongoDB Compass for that. Before we begin ensure that, user you use to access database from Compass, has **Atlas Admin** role. It is required to create validation rule.
+
+![atlas admin user role](./img/admin.png)
+
+Log into your cluster, go to *fusion* database, *sentence* collection and then to **Validation** tab.
+
+![validation view](./img/validation.png)
+
+Set the following rule, with *Validation Action* set to **Error** and *Validation Level* to **strict**:
+
+```json
+{
+   "$jsonSchema":{
+      "bsonType":"object",
+      "required":[
+         "_id",
+         "userId",
+         "content"
+      ],
+      "properties":{
+         "_id":{
+            "bsonType":"objectId"
+         },
+         "userId":{
+            "bsonType":"string"
+         },
+         "content":{
+            "bsonType":"string",
+            "minLength":10,
+            "maxLength":100
+         }
+      },
+      "additionalProperties":false
+   }
+}
+```
+
+![validation rule setup](./img/validation_rule.png)
+
+Now users will be unable to insert documents with redundant fields and sentence length will be limited. When they try to insert invalid document, they will encounter an error, preventing them.
+
+---
+
