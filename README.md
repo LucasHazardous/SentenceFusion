@@ -236,3 +236,8 @@ Now users will be unable to insert documents with redundant fields and sentence 
 
 ---
 
+# End
+
+In this extensive tutorial you learned serverless function concept and discovered how to use MongoDB Realm. You performed configuration of user authentication, serverless functions, HTTPS endpoint, collection role and validation rule. You now understand MongoDB Atlas power and you are aware how to utilize it. It is recommended that you further experiment with Realm. You can also add more functionality to [adder.html](./adder.html). I wish you good luck and much fun on your MongoDB journey.
+
+*Lucas Hazardous*
