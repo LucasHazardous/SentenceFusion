@@ -105,7 +105,7 @@ Select sentence collection, then click blue *Skip (start from scratch)* text to 
 
 ![role configuration](./img/role_conf.png)
 
-In the *Apply When* you can place any JSON expression that will always evaluate to true. In the write document permission we set the rule to use our function to decide, whether a document should be inserted. Learn more about [Rule Expressions](https://www.mongodb.com/docs/atlas/app-services/rules/).
+In the *Apply When* you can place any JSON expression that will always evaluate to true. In the write document permission we set the rule to use our function to decide, whether a document should be inserted. Learn more about [Rule Expressions](https://www.mongodb.com/docs/atlas/app-services/rules/expressions/).
 
 ```json
 {
@@ -116,11 +116,12 @@ In the *Apply When* you can place any JSON expression that will always evaluate 
         "%%user.id"
       ]
     }
-  }
+  },
+  "%%user.id": "%%this.userId"
 }
 ```
 
-The *Write* advanced filter will call our previously created function. The function will return whether the user's insertion request will be accepted.
+The *Write* advanced filter will call our previously created function. The function will return whether the user's insertion request will be accepted. The second condition makes it unable for the user to provide a different userId that their actual. If a user attempts to insert a document with userId "a", it will be rejected.
 
 After you are done with that, deploy your changes.
 
