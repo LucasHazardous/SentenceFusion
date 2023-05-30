@@ -34,13 +34,15 @@
 
 ---
 
+## Mission
+
+Assist in creation of a dynamic user-driven experience where players can unleash their creativity and shape an epic tale. But wait, there's a thrilling twist! Adhering to the golden rule, no solo consecutive sentences allowed! Brace yourself for an adventure where collaboration reigns supreme, ensuring that at least two courageous souls unite to craft an extraordinary narrative.
+
+Our objective? The mighty MongoDB Realm configuration. Sharpen your skills, summon your determination, and let's embark on this exhilarating journey together!
+
+---
+
 ## Project - part 1
-
-### Goal
-
-Create an application that will allow user creation. Created users will be able to participate in writing a story. There will be one rule: a single user can't write two sentences in a row - that ensures that at least two people will be writing a story. Later we will also create a public endpoint that will return number of created sentences.
-
-Our task is to properly configure MongoDB to make it work. Let's do it.
 
 ### Setup
 
@@ -52,7 +54,7 @@ Head to the **App Services** tab on the upper panel.
 
 ![create app](./img/create_app.png)
 
-We will begin by adding user authentication configuration.
+We will begin by adding user **Email/Password** authentication configuration.
 
 ![authentication](./img/authentication.png)
 
@@ -62,11 +64,11 @@ For now users won't be able to reset their passwords but a reset function must e
 
 ![reset password function](./img/reset_func.png)
 
-![enabled authentication](./img/enabled_auth.png)
-
 When you are done click *Save draft* button at the bottom. When you do changes won't be instantly deployed until you click *Review draft & deploy* button, then you get a chance to review all changes and deploy them.
 
-Let's create a function that we will use in a rule later. This function will be responsible for determining if a user can insert a new document.
+![enabled authentication](./img/enabled_auth.png)
+
+Let's create a function that will be used in a rule later. This function will be responsible for determining if a user can insert a new document.
 
 Enter function list view from the left side panel. You should see resetFunc created earlier. Click *Create New Function*.
 
@@ -77,6 +79,7 @@ In the *Settings* tab begin configuration:
 ![function configuration](./img/func_conf.png)
 
 Authentication **System** will allow the function to execute with full priviliges and setting it to private will make it unreachable for regular users. We configure it that way because the only user of this function will be our rule.
+*Log Function Arguments* can be useful for debugging.
 
 Now set head to *Function Editor* and write the following code:
 
@@ -105,7 +108,15 @@ Select sentence collection, then click blue *Skip (start from scratch)* text to 
 
 ![role configuration](./img/role_conf.png)
 
-In the *Apply When* you can place any JSON expression that will always evaluate to true. In the write document permission we set the rule to use our function to decide, whether a document should be inserted. Learn more about [Rule Expressions](https://www.mongodb.com/docs/atlas/app-services/rules/expressions/).
+In the *Apply When* you can place any JSON expression that will always evaluate to true, ex. :
+
+```json
+{
+  "%%user.id": "%%user.id"
+}
+```
+
+In the write document permission we set the rule to use our function to decide, whether a document should be inserted. Learn more about [Rule Expressions](https://www.mongodb.com/docs/atlas/app-services/rules/expressions/).
 
 ```json
 {
@@ -127,11 +138,11 @@ After you are done with that, deploy your changes.
 
 Go to *App Users* on the left side panel and add two users with any email and password. The email doesn't matter since we won't be verifying it anyway.
 
-### Writing web application
+### Testing configuration
 
-For writing a web app, we will need a web SDK. The SDK is hosted on a CDN under the following address: [https://unpkg.com/realm-web/dist/bundle.iife.js](https://unpkg.com/realm-web/dist/bundle.iife.js).
+For creating a web app, you would need a web SDK. The SDK is hosted on a CDN under the following address: [https://unpkg.com/realm-web/dist/bundle.iife.js](https://unpkg.com/realm-web/dist/bundle.iife.js).
 
-We won't be writing the web app though. The only important thing in the [adder.html](./adder.html) is the following part (you should change the id from *appliaction* to the one, that you get when pressing the copy button, in the upper left corner near the name of your Realm app and the home icon):
+We won't be writing the web app though, we will use [adder.html](./adder.html). The only important thing in the [adder.html](./adder.html) is the following part (**you should change the app id** from *appliaction* to the one, that you get when pressing the copy button, in the upper left corner near the name of your Realm app and the home icon):
 
 ```js
 const app = new Realm.App({ id: "application" });
@@ -144,7 +155,7 @@ async function loginEmailPassword(email, password) {
 }
 ```
 
-This code logs into Realm SDK application with user credentials and then you are allowed to perform standard operations. Of course our rules should disallow a signle user to post two consecutive sentences in a row. Use [adder.html](./adder.html) to test if your configuration is working properly with two different users you created.
+This code logs into Realm SDK application with user credentials and then you are allowed to perform standard operations. Of course our rules should disallow a single user to post two consecutive sentences in a row. Use [adder.html](./adder.html) to test if your configuration is working properly with two different users you created.
 
 ---
 
@@ -152,7 +163,7 @@ This code logs into Realm SDK application with user credentials and then you are
 
 ### Task
 
-Set up a function that returns count of sentences. Return the number as a string in a JSON, like: **{ number: ... }**. Use the same function settings and name it *sentenceCount*.
+Now we have to set up a function that returns count of sentences. It will return the number as a string in a JSON, like: **{ number: ... }**. Use the same function settings and name it *sentenceCount*.
 
 *Hint*: use testing console below to run the function and check its output, you can also perform *console.log*.
 
@@ -193,7 +204,7 @@ After deployment, use the copied curl command to check if your endpoint returns 
 
 ## Project - part 3
 
-There is one more configuration left - document validation. We will use MongoDB Compass for that. Before we begin ensure that, user you use to access database from Compass, has **Atlas Admin** role. It is required to create validation rule.
+There is one more configuration left - document validation. We will use MongoDB Compass for that. Before we begin ensure that, user you use to access database from Compass, has **Atlas Admin** role. It is required to create validation rule through Compass.
 
 ![atlas admin user role](./img/admin.png)
 
@@ -232,12 +243,12 @@ Set the following rule, with *Validation Action* set to **Error** and *Validatio
 
 ![validation rule setup](./img/validation_rule.png)
 
-Now users will be unable to insert documents with redundant fields and sentence length will be limited. When they try to insert invalid document, they will encounter an error, preventing them.
+Now users will be unable to insert documents with redundant fields and sentence lengths will be limited. When they try to insert invalid document, they will encounter an error, preventing them.
 
 ---
 
-# End
+## End
 
-In this extensive tutorial you learned serverless function concept and discovered how to use MongoDB Realm. You performed configuration of user authentication, serverless functions, HTTPS endpoint, collection role and validation rule. You now understand MongoDB Atlas power and you are aware how to utilize it. It is recommended that you further experiment with Realm. You can also add more functionality to [adder.html](./adder.html). I wish you good luck and much fun on your MongoDB journey.
+In this comprehensive tutorial, you examined the serverless function concept and explored MongoDB Realm. You successfully configured user authentication, serverless functions, HTTPS endpoints, collection roles, and validation rules. Now, you have a solid understanding of the impressive capabilities offered by MongoDB Atlas and how to leverage them effectively. To further enhance your skills, it is highly recommended that you experiment with Realm and consider adding more functionality to adder.html. Wishing you good luck and an enjoyable MongoDB journey!
 
 *Lucas Hazardous*
