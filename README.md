@@ -2,8 +2,6 @@
 
 > Warning! This tutorial will involve serverless functions, Atlas Realm and making an exciting project.
 
-> For now basic MongoDB knowledge is assumed. The tutorial will be updated to be more beginner friendly later.
-
 ---
 
 ## Introduction
@@ -46,7 +44,21 @@ Our objective? The mighty MongoDB Realm configuration. Sharpen your skills, summ
 
 ### Setup
 
-Login to MongoDB Atlas and create a new project. When creating a new free-tier cluster: choose a nearby location, create a new user and **set access to anywhere (0.0.0.0/0)**. Inside the cluster create a database named ***fusion*** with a collection named ***sentence***.
+If it's your first time working with Atlas, go to [Atlas login page](https://account.mongodb.com/account/login). You can quickly connect with eiter Google or Github account. Then create a new project named ***SentenceFusion***. Next you should have something similar to this:
+
+![empty project](./img/empty_project.png)
+
+Click **Build a Database**. Now you will have to select cluster configuration. Select whatever's free, for the region choose something close to your location.
+
+![cluster](./img/cluster.png)
+
+Now you will have to create a user. We will use it later to log into Compass. Don't worry if you forget the password, you can reset it at any time. For the **IP Access List** remove your current address and add **0.0.0.0/0** to allow access from anywhere.
+
+![access](./img/access.png)
+
+When you Cluster finishes creating click **Browse Collections**, then **Add My Own Data**. For the **Database name** enter ***fusion*** and for the **Collection name** enter ***sentence***. Click **Create**.
+
+![create database](./img/create_database.png)
 
 ### Authentication
 
@@ -210,11 +222,17 @@ After deployment, use the copied curl command to check if your endpoint returns 
 
 ### Validation
 
-There is one more configuration left - document validation. We will use MongoDB Compass for that. Before we begin, ensure that the user you use to access database from Compass has **Atlas Admin** role. It is required to create validation rule through Compass.
+There is one more configuration left - document validation. We will use MongoDB Compass for that, you can download it [here](https://www.mongodb.com/try/download/compass).
+
+Open **Database Access** on the left side panel. **EDIT** you user. Under **Built-in Role** select **Atlas Admin**. It is required to create validation rule through Compass. If you forgot your user's password, you can also change it here. Click **Update User**.
 
 ![atlas admin user role](./img/admin.png)
 
-Log into your cluster, go to ***fusion*** database, ***sentence*** collection and then to **Validation** tab.
+Click **Data Services** and then click **Connect** on your cluster. Under **Access your data through tools** select **Compass**. Copy the connection string from the second point, replacing < password > with your password.
+
+![connect with Compass](./img/connect.png)
+
+Open MongoDB Compass, connect with copied and modified connection string, and go to ***fusion*** database, ***sentence*** collection and then to **Validation** tab.
 
 ![validation view](./img/validation.png)
 
