@@ -48,7 +48,7 @@ Our objective? The mighty MongoDB Realm configuration. Sharpen your skills, summ
 
 Login to MongoDB Atlas and create a new project. When creating a new free-tier cluster: choose a nearby location, create a new user and **set access to anywhere (0.0.0.0/0)**. Inside the cluster create a database named ***fusion*** with a collection named ***sentence***.
 
-### Configuring a Realm App
+### Authentication
 
 Head to the **App Services** tab on the upper panel. Choose **Build your own App**.
 
@@ -67,6 +67,8 @@ For now users won't be able to reset their passwords but a reset function must e
 When you are done click **Save draft** button at the bottom. When you do changes won't be instantly deployed until you click **Review draft & deploy** button, then you get a chance to review all changes and deploy them.
 
 ![enabled authentication](./img/enabled_auth.png)
+
+### Serverless Function
 
 Let's create a function that will be used in a rule later. This function will be responsible for determining if a user can insert a new document.
 
@@ -99,6 +101,8 @@ exports = async function(arg){
 ![function code](./img/func_content.png)
 
 Remember to save draft changes.
+
+### Rule
 
 Now let's configure our rule. Go to **Rules** view on the left side panel.
 
@@ -161,7 +165,7 @@ This code logs into Realm SDK application with user credentials and then you are
 
 ## Project - part 2
 
-### Task
+### Task: Write a Function
 
 Now we have to set up a function that returns count of sentences. It will return the number as a string in a JSON, like: **{ number: ... }**. Use the same function settings and name it ***sentenceCount***.
 
@@ -184,7 +188,7 @@ exports = async function(arg){
 
 <br />
 
-### Setting a trigger
+### HTTPS Endpoint
 
 In the beginning you learned that these functions can be executed on various triggers. Rules aren't the only possibility. Let's set up a HTTPS endpoint.
 
@@ -203,6 +207,8 @@ After deployment, use the copied curl command to check if your endpoint returns 
 ---
 
 ## Project - part 3
+
+### Validation
 
 There is one more configuration left - document validation. We will use MongoDB Compass for that. Before we begin, ensure that the user you use to access database from Compass has **Atlas Admin** role. It is required to create validation rule through Compass.
 
