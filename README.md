@@ -50,7 +50,7 @@ Login to MongoDB Atlas and create a new project. When creating a new free-tier c
 
 ### Configuring a Realm App
 
-Head to the **App Services** tab on the upper panel.
+Head to the **App Services** tab on the upper panel. Choose **Build your own App**.
 
 ![create app](./img/create_app.png)
 
@@ -64,24 +64,24 @@ For now users won't be able to reset their passwords but a reset function must e
 
 ![reset password function](./img/reset_func.png)
 
-When you are done click *Save draft* button at the bottom. When you do changes won't be instantly deployed until you click *Review draft & deploy* button, then you get a chance to review all changes and deploy them.
+When you are done click **Save draft** button at the bottom. When you do changes won't be instantly deployed until you click **Review draft & deploy** button, then you get a chance to review all changes and deploy them.
 
 ![enabled authentication](./img/enabled_auth.png)
 
 Let's create a function that will be used in a rule later. This function will be responsible for determining if a user can insert a new document.
 
-Enter function list view from the left side panel. You should see resetFunc created earlier. Click *Create New Function*.
+Enter function list view from the left side panel. You should see resetFunc created earlier. Click **Create New Function**.
 
 ![function list](./img/funcs.png)
 
-In the *Settings* tab begin configuration:
+In the **Settings** tab begin configuration:
 
 ![function configuration](./img/func_conf.png)
 
 Authentication **System** will allow the function to execute with full priviliges and setting it to private will make it unreachable for regular users. We configure it that way because the only user of this function will be our rule.
-*Log Function Arguments* can be useful for debugging.
+**Log Function Arguments** can be useful for debugging.
 
-Now set head to *Function Editor* and write the following code:
+Now set head to **Function Editor** and write the following code:
 
 ```js
 exports = async function(arg){
@@ -100,15 +100,15 @@ exports = async function(arg){
 
 Remember to save draft changes.
 
-Now let's configure our rule. Go to *Rules* view on the left side panel.
+Now let's configure our rule. Go to **Rules** view on the left side panel.
 
 ![role](./img/role.png)
 
-Select sentence collection, then click blue *Skip (start from scratch)* text to create a fully customized rule. Fill settings with this configuration.
+Select sentence collection, then click blue **Skip (start from scratch)** text to create a fully customized rule. Fill settings with this configuration.
 
 ![role configuration](./img/role_conf.png)
 
-In the *Apply When* you can place any JSON expression that will always evaluate to true, ex. :
+In the **Apply When** you can place any JSON expression that will always evaluate to true, ex. :
 
 ```json
 {
@@ -132,11 +132,11 @@ In the write document permission we set the rule to use our function to decide, 
 }
 ```
 
-The *Write* advanced filter will call our previously created function. The function will return whether the user's insertion request will be accepted. The second condition makes it unable for the user to provide a different userId that their actual. If a user attempts to insert a document with userId "a", it will be rejected.
+The **Write** advanced filter will call our previously created function. The function will return whether the user's insertion request will be accepted. The second condition makes it unable for the user to provide a different userId that their actual. If a user attempts to insert a document with userId "a", it will be rejected.
 
 After you are done with that, deploy your changes.
 
-Go to *App Users* on the left side panel and add two users with any email and password. The email doesn't matter since we won't be verifying it anyway.
+Go to **App Users** on the left side panel and add two users with any email and password. The email doesn't matter since we won't be verifying it anyway.
 
 ### Testing configuration
 
@@ -163,7 +163,7 @@ This code logs into Realm SDK application with user credentials and then you are
 
 ### Task
 
-Now we have to set up a function that returns count of sentences. It will return the number as a string in a JSON, like: **{ number: ... }**. Use the same function settings and name it *sentenceCount*.
+Now we have to set up a function that returns count of sentences. It will return the number as a string in a JSON, like: **{ number: ... }**. Use the same function settings and name it ***sentenceCount***.
 
 *Hint*: use testing console below to run the function and check its output, you can also perform *console.log*.
 
@@ -190,11 +190,11 @@ In the beginning you learned that these functions can be executed on various tri
 
 ![endpoints list](./img/endpoints.png)
 
-Our endpoint will be for GET requests and it will respond with JSON result. Here you should copy the second URL under the *Operation Type* as later we will use it to test the endpoint.
+Our endpoint will be for GET requests and it will respond with JSON result. Here you should copy the second URL under the **Operation Type** as later we will use it to test the endpoint.
 
 ![endpoint configuration 1](./img/endpoint_conf1.png)
 
-In the *Function* option select the function that you created earlier in the task. As you can see endpoints can be also used for user creation.
+In the **Function** option, select the function that you created earlier in the task. As you can see endpoints can be also used for user creation.
 
 ![endpoint configuration 2](./img/endpoint_conf2.png)
 
@@ -204,15 +204,15 @@ After deployment, use the copied curl command to check if your endpoint returns 
 
 ## Project - part 3
 
-There is one more configuration left - document validation. We will use MongoDB Compass for that. Before we begin ensure that, user you use to access database from Compass, has **Atlas Admin** role. It is required to create validation rule through Compass.
+There is one more configuration left - document validation. We will use MongoDB Compass for that. Before we begin, ensure that the user you use to access database from Compass has **Atlas Admin** role. It is required to create validation rule through Compass.
 
 ![atlas admin user role](./img/admin.png)
 
-Log into your cluster, go to *fusion* database, *sentence* collection and then to **Validation** tab.
+Log into your cluster, go to ***fusion*** database, ***sentence*** collection and then to **Validation** tab.
 
 ![validation view](./img/validation.png)
 
-Set the following rule, with *Validation Action* set to **Error** and *Validation Level* to **strict**:
+Set the following rule, with **Validation Action** set to **Error** and **Validation Level** to **strict**:
 
 ```json
 {
@@ -243,7 +243,7 @@ Set the following rule, with *Validation Action* set to **Error** and *Validatio
 
 ![validation rule setup](./img/validation_rule.png)
 
-Now users will be unable to insert documents with redundant fields and sentence lengths will be limited. When they try to insert invalid document, they will encounter an error, preventing them.
+Now users will be unable to insert documents with redundant fields and sentence lengths will be limited. When they try to insert invalid document, they will encounter an error preventing them.
 
 ---
 
